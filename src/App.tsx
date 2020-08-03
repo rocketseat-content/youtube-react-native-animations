@@ -1,10 +1,9 @@
 import React from 'react';
-// import Login from './pages/Login';
-import StickyHeader from './pages/StickyHeader';
+
+import Drag from './pages/Drag';
 
 const App: React.FC = () => {
-  // return <Login />;
-  return <StickyHeader />;
+  return <Drag />;
 };
 
 export default App;

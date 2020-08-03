@@ -1,54 +1,41 @@
 import React, {useEffect} from 'react';
-import {View, StyleSheet, StatusBar, Image, Text} from 'react-native';
-import {RectButton} from 'react-native-gesture-handler';
-
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
-  interpolate,
   Easing,
+  interpolate,
   Extrapolate,
+  sequence,
 } from 'react-native-reanimated';
+import {View, StyleSheet, StatusBar} from 'react-native';
 
 import heroImg from '../assets/hero.png';
 
 const Login: React.FC = () => {
-  const imagePosition = useSharedValue(-30);
   const titlePosition = useSharedValue(30);
-  const buttonOpacity = useSharedValue(0);
+  const imagePosition = useSharedValue(-30);
 
   useEffect(() => {
     imagePosition.value = withTiming(
       0,
       {
-        duration: 400,
+        duration: 500,
       },
       () => {
-        titlePosition.value = withTiming(
-          0,
-          {
-            duration: 400,
-          },
-          () => {
-            buttonOpacity.value = withTiming(1, {duration: 400});
-          },
+        titlePosition.value = sequence(
+          withTiming(0, {
+            duration: 1000,
+            easing: Easing.bounce,
+          }),
+          withTiming(-320, {
+            duration: 500,
+            easing: Easing.bounce,
+          }),
         );
       },
     );
   }, []);
-
-  const heroStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{translateY: imagePosition.value}],
-      opacity: interpolate(
-        imagePosition.value,
-        [-30, 0],
-        [0, 1],
-        Extrapolate.CLAMP,
-      ),
-    };
-  });
 
   const titleStyle = useAnimatedStyle(() => {
     return {
@@ -62,9 +49,9 @@ const Login: React.FC = () => {
     };
   });
 
-  const buttonStyle = useAnimatedStyle(() => {
+  const heroStyle = useAnimatedStyle(() => {
     return {
-      opacity: buttonOpacity.value,
+      transform: [{translateY: imagePosition.value}],
     };
   });
 
@@ -72,19 +59,11 @@ const Login: React.FC = () => {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#13131A" />
 
-      <Animated.View style={heroStyle}>
-        <Image style={styles.hero} source={heroImg} />
-      </Animated.View>
+      <Animated.Image style={[styles.hero, heroStyle]} source={heroImg} />
 
       <Animated.Text style={[styles.title, titleStyle]}>
-        Seja bem-vindo!
+        Bem-vindo ao app
       </Animated.Text>
-
-      <Animated.View style={buttonStyle}>
-        <RectButton onPress={() => {}} style={styles.button}>
-          <Text style={styles.buttonText}>Criar conta gratuita</Text>
-        </RectButton>
-      </Animated.View>
     </View>
   );
 };
@@ -92,10 +71,9 @@ const Login: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 32,
     backgroundColor: '#13131A',
-    alignItems: 'center',
     justifyContent: 'center',
+    alignItems: 'center',
   },
 
   hero: {
@@ -105,25 +83,9 @@ const styles = StyleSheet.create({
   },
 
   title: {
+    fontWeight: 'bold',
+    color: '#FFF',
     fontSize: 32,
-    color: '#FFF',
-    fontWeight: 'bold',
-  },
-
-  button: {
-    height: 56,
-    width: 320,
-    backgroundColor: '#6C63FF',
-    borderRadius: 28,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 40,
-  },
-
-  buttonText: {
-    color: '#FFF',
-    fontWeight: 'bold',
-    fontSize: 18,
   },
 });
 
